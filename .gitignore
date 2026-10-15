@@ -75,3 +75,6 @@ CMakeUserPresets.json
 *-prefix/
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake,c
+
+# oops forgot to ignore the build directories!!!
+build/
