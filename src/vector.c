@@ -11,6 +11,9 @@ vec_t init_vec(size_t new_cap, bool* success)
 {
     vec_t ret = init_empty_vec();
     if (new_cap == 0) {
+        if (success != nullptr) {
+            *success = true;
+        }
         return ret;
     }
     if (new_cap > (SIZE_MAX) / sizeof(data_t)) {
