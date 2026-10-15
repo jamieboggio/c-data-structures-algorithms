@@ -1,5 +1,6 @@
 # BUILDING
 
+1. Ensure `CMake, clang, and cmocka` are installed.
 1. Download the codebase into a directory of your choosing. (e.g., `~/Projects/dsa-c`)
 1. In the root directory, run `cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_C_COMPILER=clang`.
 1. Then run `cd build && make && cd ..`.
