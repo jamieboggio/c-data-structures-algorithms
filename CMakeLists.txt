@@ -16,8 +16,6 @@ add_executable(vector-test
     tests/vector-test.c
 )
 
-set_target_properties(vector-test PROPERTIES C_STANDARD 17)
-
 add_library(dsa STATIC
    src/vector.c 
 )
