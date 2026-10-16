@@ -70,3 +70,24 @@ bool push_back_vec(vec_t* vec, data_t new_element)
     vec->data[(vec->size)++] = new_element;
     return true;
 }
+
+// TODO: Implement the following functions
+bool pop_back_element(vec_t* vec, data_t* old_element)
+{
+    return false;
+}
+
+bool insert_vec(vec_t* vec, size_t index, data_t new_element)
+{
+    return false;
+}
+
+bool erase_vec(vec_t* vec, size_t index, data_t* old_element)
+{
+    return false;
+}
+
+bool resize_vec(vec_t* vec, size_t new_capacity)
+{
+    return false;
+}
