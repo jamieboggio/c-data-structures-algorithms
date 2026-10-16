@@ -1,0 +1,52 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "-S", "${workspaceFolder}",
+                "-B", "${workspaceFolder}/build",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "CMake: Build",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build", "${workspaceFolder}/build"
+            ],
+            "dependsOn": "CMake: Configure",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "CTest: Run All",
+            "type": "process",
+            "command": "ctest",
+            "args": [
+                "--test-dir", "${workspaceFolder}/build",
+                "--output-on-failure"
+            ],
+            "dependsOn": "CMake: Build",
+            "group": "test",
+            "problemMatcher": []
+        },
+        {
+            "label": "CMocka: Run Individual Tests",
+            "type": "process",
+            "command": "build/vector-test",
+            "args": [],
+            "dependsOn": "CMake: Build",
+            "group": "test",
+            "problemMatcher": []
+        }
+    ]
+}
