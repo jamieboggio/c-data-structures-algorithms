@@ -9,7 +9,8 @@ vec_t init_empty_vec()
     return (vec_t){.data = nullptr, .capacity = 0, .size = 0};
 }
 
-bool init_vec(size_t new_cap, vec_t* vec)
+// TODO: swap arguments of init_vec
+bool init_vec(vec_t* vec, size_t new_cap)
 {
     if (vec == nullptr) {
         return false;
@@ -49,7 +50,9 @@ bool push_back_vec(vec_t* vec, data_t new_element)
     if (vec == nullptr) {
         return false;
     }
-    if (vec->data == nullptr && !init_vec(DEFAULT_CAPACITY, vec)) {
+
+    // HACK: this is bad
+    if (vec->data == nullptr && !init_vec(vec, DEFAULT_CAPACITY)) {
         return false;
     }
 
@@ -71,14 +74,39 @@ bool push_back_vec(vec_t* vec, data_t new_element)
     return true;
 }
 
-// TODO: Implement the following functions
 bool pop_back_element(vec_t* vec, data_t* old_element)
 {
-    return false;
+    if (vec == nullptr || vec->data == nullptr) {
+        return false;
+    }
+    if (vec->capacity == 0 || vec->size == 0) {
+        return false;
+    }
+    vec->size--;
+    if (old_element != nullptr) {
+
+        *old_element = vec->data[vec->size];
+    }
+    return true;
 }
+
+// TODO: Implement the following functions
 
 bool insert_vec(vec_t* vec, size_t index, data_t new_element)
 {
+    if (vec == nullptr) {
+        return false;
+    }
+    if (vec->data == nullptr) {
+        if (index != 0) {
+            return false;
+        }
+        return init_vec(vec, DEFAULT_CAPACITY);
+    }
+    /*
+        ex: vec = [0, 1, 2, 3, 4, 5]
+        insert(&vec, 4, 69) --> vec = [0, 1, 2, 3, 69, 4, 5]
+    */
     return false;
 }
 
