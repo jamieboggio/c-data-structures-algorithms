@@ -64,6 +64,8 @@ static void test_init_vec_large_capacity(void** state)
     vec_t vec;
     bool success = init_vec(1'000'000, &vec);
     assert_true(success);
+
+    free_vec(&vec);
 }
 
 static void test_free_vec(void** state)
