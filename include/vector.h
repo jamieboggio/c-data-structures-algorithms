@@ -15,7 +15,7 @@ typedef int data_t;
 #define MAX_CAPACITY (PTRDIFF_MAX / (sizeof(data_t)))
 #define DEFAULT_CAPACITY 32UL
 
-typedef struct {
+typedef struct vec_struct {
     data_t* data;
     size_t size;
     size_t capacity;
@@ -31,11 +31,11 @@ vec_t init_empty_vec();
 /**
  * @brief Initializes a vector with a specified capacity
  *
+ * @param vec Pointer to the vector to initialize
  * @param new_cap The new capacity of the vector
- * @param vec The vector to initialize
  * @return true on success, false on failure
  */
-bool init_vec(size_t new_cap, vec_t* vec);
+bool init_vec(vec_t* vec, size_t new_cap);
 
 /**
  * @brief Frees the memory allocated for the vector
@@ -58,7 +58,7 @@ bool push_back_vec(vec_t* vec, data_t new_element);
  *
  * @param vec The vector to remove the element from
  * @param old_element A pointer to store the removed element
- * @return true on success, false on failure
+ * @return true on success (removal succeeds), false on failure (removal fails)
  */
 bool pop_back_element(vec_t* vec, data_t* old_element);
 
