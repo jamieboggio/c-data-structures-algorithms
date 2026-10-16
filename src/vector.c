@@ -49,6 +49,10 @@ bool push_back_vec(vec_t* vec, data_t new_element)
     if (vec == nullptr) {
         return false;
     }
+    if (vec->data == nullptr && !init_vec(DEFAULT_CAPACITY, vec)) {
+        return false;
+    }
+
     if (vec->size >= vec->capacity) {
         // grow vector
         if ((vec->capacity >= MAX_CAPACITY) || (vec->size >= (MAX_CAPACITY - 1))) {
@@ -57,6 +61,10 @@ bool push_back_vec(vec_t* vec, data_t new_element)
         size_t new_capacity =
                 vec->capacity >= (MAX_CAPACITY / 2) ? MAX_CAPACITY : (2 * vec->capacity);
         void* new_data = realloc(vec->data, sizeof(data_t) * new_capacity);
+        if (new_data == nullptr) {
+            return false;
+        }
+        vec->data = new_data;
     }
     vec->data[(vec->size)++] = new_element;
     return true;
