@@ -9,9 +9,9 @@
 --- 
 
 1. Dynamic Array (vec_t)
-- [ ] init_empty_vec(): Create an empty vector
-- [ ] init_vec(): Initialize with a requested capacity
-- [ ] free_vec(): Release allocated storage
+- [x] init_empty_vec(): Create an empty vector
+- [x] init_vec(): Initialize with a requested capacity
+- [x] free_vec(): Release allocated storage
 - [ ] push_back_vec(): Append an element
 - [ ] pop_back_vec(): Remove the last element
 - [ ] insert_vec(): Insert at an index, shifting elements right
