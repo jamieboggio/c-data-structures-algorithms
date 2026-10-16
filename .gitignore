@@ -83,6 +83,8 @@ build/
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/tasks.json
+.agents
+.codex
 
 # Local History for Visual Studio Code
 .history/
