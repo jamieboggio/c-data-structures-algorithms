@@ -98,10 +98,14 @@ static void test_push_back_vec(void** state)
     assert_int_equal(vec.size, 1);
     assert_int_equal(vec.capacity, DEFAULT_CAPACITY);
     assert_int_equal(vec.data[0], element);
+
+    free_vec(&vec);
 }
 
 int main(void)
 {
+    // FUTURE JAMIE
+    // PLEASE DO NOT FORGET TO FREE YOUR VECTORS!
     const struct CMUnitTest tests[] = {cmocka_unit_test(test_empty_vec),
                                        cmocka_unit_test(test_init_vec),
                                        cmocka_unit_test(test_init_vec_zero_capacity),
