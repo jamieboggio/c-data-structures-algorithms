@@ -18,9 +18,9 @@ static void test_init_vec(void** state)
 {
     (void)state;
 
-    bool success = false;
+    vec_t vec;
     size_t num_items = 4;
-    vec_t vec = init_vec(num_items, &success);
+    bool success = init_vec(num_items, &vec);
 
     assert_true(success);
     assert_non_null(vec.data);
@@ -34,8 +34,9 @@ static void test_zero_capacity_vec(void** state)
 {
     (void)state;
 
-    bool success = false;
-    vec_t vec = init_vec(0, &success);
+    vec_t vec;
+    size_t num_items = 0;
+    bool success = init_vec(num_items, &vec);
 
     assert_true(success);
     assert_null(vec.data);
@@ -49,8 +50,10 @@ static void test_too_large_capacity_vec(void** state)
 
     // intentionally set to true so it fails when it needs to
     // VALGRIND WILL REPORT A "FISHY" VALUE, IGNORE
-    bool success = true;
-    vec_t vec = init_vec(SIZE_MAX / sizeof(data_t), &success);
+    // vec_t vec = init_vec(SIZE_MAX / sizeof(data_t), &success);
+    vec_t vec;
+    size_t theoretical_max = sizeof(data_t) == 1 ? SIZE_MAX : MAX_CAPACITY + 1;
+    bool success = init_vec(theoretical_max, &vec);
     assert_false(success);
 }
 
@@ -58,9 +61,9 @@ static void test_free_vec(void** state)
 {
     (void)state;
 
-    bool success = false;
+    vec_t vec;
     size_t num_items = 32;
-    vec_t vec = init_vec(num_items, &success);
+    bool success = init_vec(num_items, &vec);
 
     assert_true(success);
     assert_non_null(vec.data);
@@ -78,19 +81,20 @@ static void test_insert_into_existing_capacity(void** state)
 {
     (void)state;
 
-    bool success = false;
+    vec_t vec;
     size_t num_items = 32;
-    vec_t vec = init_vec(num_items, &success);
+    size_t index_of_insert = num_items;
+    bool success = init_vec(num_items, &vec);
 
     assert_true(success);
     assert_non_null(vec.data);
     assert_int_equal(vec.size, 0);
     assert_int_equal(vec.capacity, num_items);
 
-    assert_true(insert_vec(&vec, num_items, -1));
+    assert_true(insert_vec(&vec, index_of_insert, -1));
     assert_int_equal(vec.size, 1);
     assert_int_equal(vec.capacity, 2 * num_items);
-    for (size_t i = 0; i < num_items; i++) {
+    for (size_t i = 0; i < index_of_insert; i++) {
         assert_int_equal(vec.data[i], 0);
     }
     assert_int_equal(vec.data[num_items], -1);

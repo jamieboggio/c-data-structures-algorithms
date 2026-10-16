@@ -17,8 +17,10 @@ typedef struct {
 } vec_t;
 
 vec_t init_empty_vec();
-vec_t init_vec(size_t new_cap, bool* success);
+bool init_vec(size_t new_cap, vec_t* vec);
 void free_vec(vec_t* vec);
+bool push_back_vec(vec_t* vec, data_t new_element);
+bool pop_back_element(vec_t* vec);
 bool insert_vec(vec_t* vec, size_t index, data_t new_element);
 
 #endif // DSA_INCLUDE_VECTOR_H

@@ -1,51 +1,59 @@
 #include "vector.h"
+#include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 vec_t init_empty_vec()
 {
     return (vec_t){.data = nullptr, .capacity = 0, .size = 0};
 }
 
-vec_t init_vec(size_t new_cap, bool* success)
+bool init_vec(size_t new_cap, vec_t* vec)
 {
-    vec_t ret = init_empty_vec();
+    if (vec == nullptr) {
+        return false;
+    }
+
+    vec_t new_vec = init_empty_vec();
     if (new_cap == 0) {
-        if (success != nullptr) {
-            *success = true;
-        }
-        return ret;
+        *vec = new_vec;
+        return true;
     }
-    if (new_cap > (SIZE_MAX) / sizeof(data_t)) {
-        if (success != nullptr) {
-            *success = false;
-        }
-        return ret;
+
+    if (new_cap > MAX_CAPACITY) {
+        return false;
     }
+
     void* data = malloc(sizeof(data_t) * new_cap);
     if (data == nullptr) {
-        if (success != nullptr) {
-            *success = false;
-        }
-        return ret;
+        return false;
     }
-    ret.data = (data_t*)data;
-    ret.capacity = new_cap;
-    if (success != nullptr) {
-        *success = true;
-    }
-    return ret;
+    vec->data = (data_t*)data;
+    vec->size = 0;
+    vec->capacity = new_cap;
+    return true;
 }
 
-size_t calculate_new_capacity(size_t old_capacity)
+// index = 34, old_capacity = 34
+size_t calculate_new_capacity(size_t index, size_t old_capacity)
 {
-    if (old_capacity >= (MAX_CAPACITY / 2)) {
+    // 0 <= ret <= MAX_CAPACITY - invariant
+
+    if (index > old_capacity) {
+        if (index > MAX_CAPACITY / 2) {
+            return MAX_CAPACITY;
+        }
+        return 2 * index;
+    }
+    if (old_capacity > (MAX_CAPACITY / 2)) {
         return MAX_CAPACITY;
     }
-    if (old_capacity == 0) {
-        return DEFAULT_CAPACITY;
-    }
-    return 2 * old_capacity;
+    // 34 >=? 16 --> yes
+    //     --> 2 * 34 = 68
+    size_t wish_capacity =
+            (old_capacity >= (DEFAULT_CAPACITY / 2)) ? (2 * old_capacity) : DEFAULT_CAPACITY;
+    return wish_capacity;
 }
 
 bool insert_vec(vec_t* vec, size_t index, data_t new_element)
@@ -55,16 +63,18 @@ bool insert_vec(vec_t* vec, size_t index, data_t new_element)
     }
     const size_t old_capacity = vec->capacity;
     if (index >= old_capacity) {
-        const size_t new_capacity = calculate_new_capacity(old_capacity);
+        if (index >= MAX_CAPACITY) {
+            return false;
+        }
+        const size_t new_capacity = calculate_new_capacity(index, old_capacity);
         void* new_data = realloc(vec->data, new_capacity * sizeof(data_t));
         if (new_data == nullptr) {
             return false;
         }
         vec->capacity = new_capacity;
         vec->data = (data_t*)new_data;
-        for (size_t i = old_capacity; i < new_capacity; i++) {
-            vec->data[i] = (data_t)0;
-        }
+        assert(new_capacity >= old_capacity);
+        memset((vec->data) + old_capacity, 0, (new_capacity - old_capacity));
     }
     vec->data[index] = new_element;
     vec->size++;
