@@ -65,6 +65,7 @@ bool push_back_vec(vec_t* vec, data_t new_element)
             return false;
         }
         vec->data = new_data;
+        vec->capacity = new_capacity;
     }
     vec->data[(vec->size)++] = new_element;
     return true;
