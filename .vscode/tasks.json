@@ -47,6 +47,15 @@
             "dependsOn": "CMake: Build",
             "group": "test",
             "problemMatcher": []
+        },
+        {
+            "label": "valgrind: check memory leaks during testing",
+            "type": "process",
+            "command": "valgrind",
+            "args": ["-s", "--leak-check=full", "--track-origins=yes", "build/vector-test"],
+            "dependsOn": "CMake: Build",
+            "group": "test", 
+            "problemMatcher": []
         }
     ]
 }
