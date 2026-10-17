@@ -50,10 +50,12 @@ data_t* push_back_slist(slist_t* list, data_t* new_element)
     if (u == nullptr) {
         return nullptr;
     }
-    list->tail = u;
     if (list->n == 0) {
         list->head = u;
+    } else {
+        list->tail->next = u;
     }
+    list->tail = u;
     list->n++;
     return new_element;
 }
@@ -67,14 +69,20 @@ data_t* pop_back_slist(slist_t* list, data_t* out_element)
 
     // case n==1
     if (list->n == 1) {
-        /*list->head should be equal tolist->tail
-         * but calling free() on a nullptr is mostly harmless
+        /*list->head should be equal to list->tail
+         * but calling free() on a nullptr is harmless
+         * HOWEVER..., we still check if they're the same.
          */
+        if (list->head != list->tail) {
+            return nullptr;
+        }
         free(list->head);
-        free(list->tail);
         if (out_element != nullptr) {
             *out_element = tmp_val;
         }
+        list->n = 0;
+        list->head = nullptr;
+        list->tail = nullptr;
         return out_element;
     }
     // find next to last, and set tail to it
@@ -84,9 +92,11 @@ data_t* pop_back_slist(slist_t* list, data_t* out_element)
     }
     free(list->tail);
     list->tail = cur_node;
+    list->tail->next = nullptr;
     if (out_element != nullptr) {
         *out_element = tmp_val;
     }
+    list->n--;
     return out_element;
 }
 
@@ -95,9 +105,20 @@ data_t* insert_slist(slist_t* list, data_t* new_element, size_t index)
     if (list == nullptr || new_element == nullptr || index > list->n) {
         return nullptr;
     }
+    if (index == 0) {
+        return push_front_slist(list, new_element);
+    } else if (index == list->n) {
+        return push_back_slist(list, new_element);
+    }
     node* u = new_node(*new_element);
     if (u == nullptr) {
         return nullptr;
+    }
+    if (list->n == 0) {
+        list->n = 1;
+        list->head = u;
+        list->tail = u;
+        return new_element;
     }
     node* cur_node = list->head;
     for (size_t i = 1; i < index; i++) {
@@ -113,6 +134,11 @@ data_t* erase_slist(slist_t* list, data_t* out_element, size_t index)
 {
     if (list == nullptr || index >= list->n) {
         return nullptr;
+    }
+    if (index == 0) {
+        return pop_front_slist(list, out_element);
+    } else if (list->n - 1 == index) {
+        return pop_back_slist(list, out_element);
     }
     node* cur_node = list->head;
     for (size_t i = 1; i < index; i++) {
@@ -138,6 +164,7 @@ node* find_slist(slist_t* list, data_t wish_element)
         if (cur_node->val == wish_element) {
             return cur_node;
         }
+        cur_node = cur_node->next;
     }
     return nullptr;
 }

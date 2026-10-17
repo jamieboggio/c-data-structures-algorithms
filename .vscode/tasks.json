@@ -33,14 +33,15 @@
             "command": "ctest",
             "args": [
                 "--test-dir", "${workspaceFolder}/build",
-                "--output-on-failure"
+                "--output-on-failure",
+                "--test-timeout", "5"
             ],
             "dependsOn": "CMake: Build",
             "group": "test",
             "problemMatcher": []
         },
         {
-            "label": "CMocka: Run Individual Tests",
+            "label": "CMocka: Run Vector Tests",
             "type": "process",
             "command": "build/vector-test",
             "args": [],
@@ -49,10 +50,19 @@
             "problemMatcher": []
         },
         {
-            "label": "valgrind: check memory leaks during testing",
+            "label": "valgrind vector-test: check memory leaks during testing",
             "type": "process",
             "command": "valgrind",
             "args": ["-s", "--leak-check=full", "--track-origins=yes", "build/vector-test"],
+            "dependsOn": "CMake: Build",
+            "group": "test", 
+            "problemMatcher": []
+        },
+        {
+            "label": "valgrind slist-test: check memory leaks during testing",
+            "type": "process",
+            "command": "valgrind",
+            "args": ["-s", "--leak-check=full", "--track-origins=yes", "build/slist-test"],
             "dependsOn": "CMake: Build",
             "group": "test", 
             "problemMatcher": []
