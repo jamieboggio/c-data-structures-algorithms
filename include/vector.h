@@ -38,6 +38,7 @@ bool init_empty_vec(vec_t* vec);
 
 /**
  * @brief Initializes a vector with a specified capacity
+ * @pre vec must not have already been allocated as this will create a memory leak
  *
  * @param vec Pointer to the vector to initialize
  * @param new_cap The new capacity of the vector
@@ -97,7 +98,7 @@ bool erase_vec(vec_t* vec, size_t index, data_t* old_element);
  * @param new_capacity The new capacity of the vector
  * @return true on success, false on failure
  */
-bool resize_vec(vec_t* vec, size_t new_capacity);
+bool resize_vec(vec_t* vec, size_t new_size);
 
 /**
  * @brief Prints vec to stdout.
