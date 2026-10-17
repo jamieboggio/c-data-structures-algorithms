@@ -19,9 +19,9 @@ add_executable(driver
 )
 
 
-
 add_library(dsa STATIC
-   src/vector.c 
+   src/vector.c
+   src/slist.c
 )
 
 target_link_libraries(driver dsa)
