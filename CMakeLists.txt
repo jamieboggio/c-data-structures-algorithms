@@ -22,15 +22,22 @@ add_executable(driver
 add_library(dsa STATIC
    src/vector.c
    src/slist.c
+   src/node.c
 )
 
 target_link_libraries(driver dsa)
 target_include_directories(dsa PUBLIC include)
 if(dsa_c_ENABLE_TESTING)
+    add_executable(slist-test
+        tests/slist-test.c
+    )
     add_executable(vector-test
         tests/vector-test.c
     )
     target_link_libraries(vector-test PRIVATE cmocka::cmocka)
+    target_link_libraries(slist-test PRIVATE cmocka::cmocka)
     target_link_libraries(vector-test PUBLIC dsa)
+    target_link_libraries(slist-test PUBLIC dsa)
     add_test(NAME vector-test COMMAND vector-test)
+    add_test(NAME slist-test COMMAND slist-test)
 endif()
