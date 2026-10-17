@@ -22,11 +22,19 @@ typedef struct vec_struct {
 } vec_t;
 
 /**
- * @brief Initializes an empty vector
+ * @brief Initializes a vector with null data, 0 size, and 0 capacity.
  *
  * @return vec_t
  */
-vec_t init_empty_vec();
+vec_t init_null_vec();
+
+/**
+ * @brief Equivalent to init_vec(vec_t* vec, new_cap = DEFAULT_CAPACITY)
+ *
+ * @param vec Pointer to the vector to initialize
+ * @return true on success, false on failure
+ */
+bool init_empty_vec(vec_t* vec);
 
 /**
  * @brief Initializes a vector with a specified capacity
@@ -90,5 +98,43 @@ bool erase_vec(vec_t* vec, size_t index, data_t* old_element);
  * @return true on success, false on failure
  */
 bool resize_vec(vec_t* vec, size_t new_capacity);
+
+/**
+ * @brief Prints vec to stdout.
+ *
+ * @param vec
+ */
+void print_vec(vec_t vec);
+
+/**
+ * @brief vec->data[i] := new_element
+ *
+ * @param vec Pointer to vec to write to
+ * @param index
+ * @param new_element
+ * @return true if setting is successful
+ * @return false if setting fails
+ */
+bool set_vec(vec_t* vec, size_t index, data_t new_element);
+
+/**
+ * @brief Get the element at given index
+ *
+ * @param vec
+ * @param index
+ * @param out_val Pointer to value to write to
+ * @return true on success
+ * @return false on fail
+ */
+bool get_vec(vec_t vec, size_t index, data_t* out_val);
+
+/**
+ * @brief reserve specific amount of capacity for vector
+ *
+ * @param vec
+ * @return true on successful or vacuous growth
+ * @return false on failure to grow
+ */
+bool reserve_vec(vec_t* vec, size_t reserve_cap);
 
 #endif // DSA_INCLUDE_VECTOR_H
