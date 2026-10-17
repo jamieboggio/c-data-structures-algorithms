@@ -56,6 +56,15 @@
             "dependsOn": "CMake: Build",
             "group": "test", 
             "problemMatcher": []
+        },
+        {
+            "label": "driver",
+            "type": "process",
+            "command": "build/driver",
+            "args": [],
+            "dependsOn": "CMake: Build",
+            "group": "none", 
+            "problemMatcher": []
         }
     ]
 }
