@@ -6,11 +6,10 @@
 #ifndef DSA_INCLUDE_VECTOR_H
 #define DSA_INCLUDE_VECTOR_H
 
+#include "data_t.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
-typedef int data_t;
 
 #define MAX_CAPACITY (PTRDIFF_MAX / (sizeof(data_t)))
 #define DEFAULT_CAPACITY 32UL

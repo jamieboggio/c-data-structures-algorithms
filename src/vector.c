@@ -129,9 +129,9 @@ bool insert_vec(vec_t* vec, size_t index, data_t new_element)
     if ((index > vec->size) || (vec->size >= vec->capacity && !grow_vec_default(vec))) {
         return false;
     }
-    for (size_t i = vec->size; i-- > index;) { // stupid mnemonic that works: i --> index
-        vec->data[i + 1] = vec->data[i];
-    }
+
+    const size_t n_bytes = (sizeof(data_t)) * (vec->size - index);
+    memmove((vec->data) + index + 1, (vec->data) + index, n_bytes);
     vec->size++;
     vec->data[index] = new_element;
     return true;
@@ -145,9 +145,9 @@ bool erase_vec(vec_t* vec, size_t index, data_t* old_element)
     if (old_element != nullptr) {
         *old_element = vec->data[index];
     }
-    for (size_t i = index + 1; i < vec->size; i++) {
-        vec->data[i - 1] = vec->data[i];
-    }
+
+    const size_t n_bytes = (sizeof(data_t)) * (vec->size - index);
+    memmove(vec->data + index, vec->data + index + 1, n_bytes);
     vec->size--;
     return true;
 }
@@ -183,9 +183,8 @@ bool resize_vec(vec_t* vec, size_t new_size)
     }
 
     size_t old_size = vec->size;
-    for (size_t i = old_size; i < new_size; i++) {
-        vec->data[i] = (data_t)0;
-    }
+    const size_t n_bytes = (sizeof(data_t)) * (new_size - old_size);
+    memset(vec->data + old_size, (data_t)0, n_bytes);
     vec->size = new_size;
     return true;
 }
