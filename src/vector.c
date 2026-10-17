@@ -34,20 +34,18 @@ bool init_vec(vec_t* vec, size_t new_cap)
     if (vec == nullptr) {
         return false;
     }
-    vec_t new_vec = init_null_vec();
     if (new_cap == 0) {
-        *vec = new_vec;
+        *vec = init_null_vec();
         return true;
     }
     if (new_cap > MAX_CAPACITY) {
         return false;
     }
-    // MALLOC
-    void* data = malloc(sizeof(data_t) * new_cap);
-    if (data == nullptr) {
+    void* new_data = malloc(sizeof(data_t) * new_cap);
+    if (new_data == nullptr) {
         return false;
     }
-    vec->data = (data_t*)data;
+    vec->data = (data_t*)new_data;
     vec->size = 0;
     vec->capacity = new_cap;
     return true;
@@ -65,9 +63,11 @@ void free_vec(vec_t* vec)
 
 bool grow_vec(vec_t* vec, size_t new_capacity)
 {
-    if ((vec->capacity >= MAX_CAPACITY) || (vec->size >= (MAX_CAPACITY - 1))) {
+    if ((vec->capacity >= MAX_CAPACITY) || (new_capacity >= MAX_CAPACITY) ||
+        new_capacity < vec->capacity) {
         return false;
     }
+
     void* new_data = realloc(vec->data, sizeof(data_t) * new_capacity);
     if (new_data == nullptr) {
         return false;
@@ -95,7 +95,8 @@ bool push_back_vec(vec_t* vec, data_t new_element)
     if (vec->size >= vec->capacity && !grow_vec_default(vec)) {
         return false;
     }
-    vec->data[(vec->size)++] = new_element;
+    vec->data[vec->size] = new_element;
+    vec->size++;
     return true;
 }
 
@@ -111,8 +112,6 @@ bool pop_back_element(vec_t* vec, data_t* old_element)
     return true;
 }
 
-// TODO: Implement the following functions
-
 bool insert_vec(vec_t* vec, size_t index, data_t new_element)
 {
     if (vec == nullptr) {
@@ -120,7 +119,7 @@ bool insert_vec(vec_t* vec, size_t index, data_t new_element)
     }
     // vec->data == nullptr is not necessarily a fail condition
     // but combined with index != 0, it is
-    if ((is_null_vec(vec) || is_empty_vec(vec))) {
+    if (is_null_vec(vec)) {
         if (index != 0 || !init_vec(vec, DEFAULT_CAPACITY)) {
             return false;
         }
@@ -130,7 +129,7 @@ bool insert_vec(vec_t* vec, size_t index, data_t new_element)
     if ((index > vec->size) || (vec->size >= vec->capacity && !grow_vec_default(vec))) {
         return false;
     }
-    for (size_t i = vec->size - 1; i >= index; i--) {
+    for (size_t i = vec->size; i-- > index;) { // stupid mnemonic that works: i --> index
         vec->data[i + 1] = vec->data[i];
     }
     vec->size++;
@@ -149,6 +148,7 @@ bool erase_vec(vec_t* vec, size_t index, data_t* old_element)
     for (size_t i = index + 1; i < vec->size; i++) {
         vec->data[i - 1] = vec->data[i];
     }
+    vec->size--;
     return true;
 }
 
@@ -166,13 +166,20 @@ void print_vec(vec_t vec)
 
 bool resize_vec(vec_t* vec, size_t new_size)
 {
-    if (vec == nullptr || new_size <= vec->size || new_size >= MAX_CAPACITY) {
+    if (vec == nullptr || new_size >= MAX_CAPACITY) {
         return false;
     }
 
-    if (new_size >= vec->capacity) {
-        size_t new_cap = new_size >= (MAX_CAPACITY / 2) ? MAX_CAPACITY : 2 * vec->capacity;
-        grow_vec(vec, new_cap);
+    if (vec->size >= new_size) {
+        vec->size = new_size;
+        return true;
+    }
+
+    if (new_size > vec->capacity) {
+        size_t new_cap = new_size >= (MAX_CAPACITY / 2) ? MAX_CAPACITY : 2 * new_size;
+        if (!grow_vec(vec, new_cap)) {
+            return false;
+        }
     }
 
     size_t old_size = vec->size;

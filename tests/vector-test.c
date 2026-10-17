@@ -161,18 +161,253 @@ void test_erase_vec(void** state)
 
 void test_resize_vec(void** state)
 {
+
+    (void)state;
+    vec_t vec;
+    (void)init_vec(&vec, 4);
+    size_t magic_max = 2;
+    for (data_t i = 0; i < magic_max; i++) {
+        push_back_vec(&vec, i + 1);
+    }
+    assert_int_equal(vec.capacity, 4);
+    assert_int_equal(vec.size, 2);
+    assert_true(resize_vec(&vec, 100));
+
+    assert_int_equal(vec.capacity, 200);
+    assert_int_equal(vec.size, 100);
+
+    free_vec(&vec);
 }
 
-void test_set_vec(void** state)
+static void test_set_vec(void** state)
 {
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    assert_true(init_vec(&vec, 4));
+
+    assert_true(push_back_vec(&vec, 10));
+    assert_true(push_back_vec(&vec, 20));
+    assert_true(push_back_vec(&vec, 30));
+
+    assert_true(set_vec(&vec, 1, 99));
+    assert_int_equal(vec.data[0], 10);
+    assert_int_equal(vec.data[1], 99);
+    assert_int_equal(vec.data[2], 30);
+    assert_int_equal(vec.size, 3);
+
+    assert_false(set_vec(&vec, 3, 100));
+    assert_false(set_vec(nullptr, 0, 100));
+
+    free_vec(&vec);
 }
 
-void test_get_vec(void** state)
+static void test_get_vec(void** state)
 {
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    data_t result = -1;
+
+    assert_false(get_vec(vec, 0, &result));
+    assert_int_equal(result, -1);
+
+    assert_true(push_back_vec(&vec, 42));
+    assert_true(push_back_vec(&vec, 69));
+
+    assert_true(get_vec(vec, 0, &result));
+    assert_int_equal(result, 42);
+
+    assert_true(get_vec(vec, 1, &result));
+    assert_int_equal(result, 69);
+
+    assert_false(get_vec(vec, 2, &result));
+    assert_int_equal(result, 69);
+
+    assert_false(get_vec(vec, 0, nullptr));
+
+    free_vec(&vec);
 }
 
-void test_reserve_vec(void** state)
+static void test_reserve_vec(void** state)
 {
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    assert_true(init_vec(&vec, 4));
+
+    assert_true(push_back_vec(&vec, 10));
+    assert_true(push_back_vec(&vec, 20));
+
+    assert_true(reserve_vec(&vec, 16));
+    assert_int_equal(vec.capacity, 16);
+    assert_int_equal(vec.size, 2);
+    assert_int_equal(vec.data[0], 10);
+    assert_int_equal(vec.data[1], 20);
+
+    assert_true(reserve_vec(&vec, 8));
+    assert_int_equal(vec.capacity, 16);
+
+    assert_true(reserve_vec(&vec, 16));
+    assert_int_equal(vec.capacity, 16);
+
+    free_vec(&vec);
+}
+
+static void test_reserve_null_vec(void** state)
+{
+    (void)state;
+
+    vec_t vec = init_null_vec();
+
+    assert_true(reserve_vec(&vec, 8));
+    assert_int_equal(vec.size, 0);
+    assert_true(vec.capacity >= 8);
+    assert_non_null(vec.data);
+
+    assert_true(push_back_vec(&vec, 123));
+    assert_int_equal(vec.size, 1);
+    assert_int_equal(vec.data[0], 123);
+
+    free_vec(&vec);
+}
+
+static void test_resize_growth_and_shrink(void** state)
+{
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    assert_true(init_vec(&vec, 4));
+
+    assert_true(push_back_vec(&vec, 10));
+    assert_true(push_back_vec(&vec, 20));
+
+    assert_true(resize_vec(&vec, 10));
+    assert_int_equal(vec.size, 10);
+    assert_true(vec.capacity >= 10);
+
+    assert_int_equal(vec.data[0], 10);
+    assert_int_equal(vec.data[1], 20);
+
+    for (size_t i = 2; i < 10; i++) {
+        assert_int_equal(vec.data[i], 0);
+    }
+
+    assert_true(resize_vec(&vec, 1));
+    assert_int_equal(vec.size, 1);
+    assert_int_equal(vec.data[0], 10);
+
+    assert_true(resize_vec(&vec, 5));
+    assert_int_equal(vec.size, 5);
+
+    for (size_t i = 1; i < 5; i++) {
+        assert_int_equal(vec.data[i], 0);
+    }
+
+    assert_true(resize_vec(&vec, 0));
+    assert_int_equal(vec.size, 0);
+
+    free_vec(&vec);
+}
+
+static void test_insert_into_preallocated_empty_vec(void** state)
+{
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    assert_true(init_vec(&vec, 8));
+
+    data_t* original_data = vec.data;
+    size_t original_capacity = vec.capacity;
+
+    assert_true(insert_vec(&vec, 0, 42));
+
+    assert_int_equal(vec.size, 1);
+    assert_int_equal(vec.capacity, original_capacity);
+    assert_ptr_equal(vec.data, original_data);
+    assert_int_equal(vec.data[0], 42);
+
+    free_vec(&vec);
+}
+
+static void test_insert_at_front(void** state)
+{
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    assert_true(init_vec(&vec, 8));
+
+    assert_true(push_back_vec(&vec, 10));
+    assert_true(push_back_vec(&vec, 20));
+    assert_true(push_back_vec(&vec, 30));
+
+    assert_true(insert_vec(&vec, 0, 99));
+
+    assert_int_equal(vec.size, 4);
+    assert_int_equal(vec.data[0], 99);
+    assert_int_equal(vec.data[1], 10);
+    assert_int_equal(vec.data[2], 20);
+    assert_int_equal(vec.data[3], 30);
+
+    free_vec(&vec);
+}
+
+static void test_insert_at_back(void** state)
+{
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    assert_true(init_vec(&vec, 7));
+
+    const data_t in_array[] = {8, 6, 7, 5, 3, 0, 9};
+    const size_t in_size = sizeof(in_array) / sizeof(in_array[0]);
+
+    for (size_t i = 0; i < in_size; i++) {
+        assert_true(push_back_vec(&vec, in_array[i]));
+    }
+
+    assert_true(insert_vec(&vec, in_size, 99));
+
+    const data_t out_array[] = {8, 6, 7, 5, 3, 0, 9, 99};
+    const size_t out_size = sizeof(out_array) / sizeof(out_array[0]);
+    assert_int_equal(vec.size, out_size);
+    assert_int_equal(vec.capacity, 2 * in_size);
+    for (size_t i = 0; i < out_size; i++) {
+        data_t val;
+        assert_true(get_vec(vec, i, &val));
+        assert_int_equal(val, out_array[i]);
+    }
+
+    free_vec(&vec);
+}
+
+static void test_insert_invalid_index(void** state)
+{
+    (void)state;
+
+    vec_t vec = init_null_vec();
+    assert_true(init_vec(&vec, 7));
+
+    const data_t in_array[] = {8, 6, 7, 5, 3, 0, 9};
+    const size_t in_size = sizeof(in_array) / sizeof(in_array[0]);
+
+    for (size_t i = 0; i < in_size; i++) {
+        assert_true(push_back_vec(&vec, in_array[i]));
+    }
+
+    assert_false(insert_vec(&vec, in_size + 1, 99));
+
+    const data_t out_array[] = {8, 6, 7, 5, 3, 0, 9};
+    const size_t out_size = sizeof(out_array) / sizeof(out_array[0]);
+    assert_int_equal(vec.size, out_size);
+    assert_int_equal(vec.capacity, in_size);
+    for (size_t i = 0; i < out_size; i++) {
+        data_t val;
+        assert_true(get_vec(vec, i, &val));
+        assert_int_equal(val, out_array[i]);
+    }
+
+    free_vec(&vec);
 }
 
 int main(void)
@@ -188,6 +423,16 @@ int main(void)
                                        cmocka_unit_test(test_push_back_vec),
                                        cmocka_unit_test(test_pop_back_vec),
                                        cmocka_unit_test(test_insert_vec),
-                                       cmocka_unit_test(test_erase_vec)};
+                                       cmocka_unit_test(test_erase_vec),
+                                       cmocka_unit_test(test_resize_vec),
+                                       cmocka_unit_test(test_set_vec),
+                                       cmocka_unit_test(test_get_vec),
+                                       cmocka_unit_test(test_reserve_vec),
+                                       cmocka_unit_test(test_reserve_null_vec),
+                                       cmocka_unit_test(test_resize_growth_and_shrink),
+                                       cmocka_unit_test(test_insert_into_preallocated_empty_vec),
+                                       cmocka_unit_test(test_insert_at_front),
+                                       cmocka_unit_test(test_insert_at_back),
+                                       cmocka_unit_test(test_insert_invalid_index)};
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
