@@ -24,16 +24,16 @@
     - [x] print_vec(): Prints vector to stdout
 
 2. Singly Linked List (slist_t)
-    - [ ] init_slist(): Create an empty list
-    - [ ] free_slist(): Free all nodes
+    - [x] init_slist(): Create an empty list
+    - [x] free_slist(): Free all nodes
     - [ ] push_front_slist(): Prepend a node
-    - [ ] push_back_slist(): Append a node
+    - [x] push_back_slist(): Append a node
     - [ ] pop_front_slist(): Remove the first node
     - [ ] pop_back_slist(): Remove the last node
     - [ ] insert_slist(): Insert at a given index
     - [ ] erase_slist(): Remove at a given index
     - [ ] find_slist(): Find the first matching element
-    - [ ] reverse_slist(): Reverse links in place
+    - [x] reverse_slist(): Reverse links in place
 
 3. Doubly Linked List (dlist_t)
     - [ ] init_dlist(): Create an empty list
