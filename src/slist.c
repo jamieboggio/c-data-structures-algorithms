@@ -30,14 +30,18 @@ data_t* pop_front_slist(slist_t* list, data_t* out_element)
         return nullptr;
     }
     data_t tmp_val = list->head->val;
+    node* tmp_node = list->head;
     list->head = list->head->next;
-    list->n--;
-    if (list->n == 0) {
+
+    if (list->n == 1) {
         list->tail = nullptr;
     }
     if (out_element != nullptr) {
         *out_element = tmp_val;
     }
+    free(tmp_node);
+
+    list->n--;
     return out_element;
 }
 
