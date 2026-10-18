@@ -26,13 +26,13 @@
 2. Singly Linked List (slist_t)
     - [x] init_slist(): Create an empty list
     - [x] free_slist(): Free all nodes
-    - [ ] push_front_slist(): Prepend a node
+    - [x] push_front_slist(): Prepend a node
     - [x] push_back_slist(): Append a node
-    - [ ] pop_front_slist(): Remove the first node
-    - [ ] pop_back_slist(): Remove the last node
-    - [ ] insert_slist(): Insert at a given index
-    - [ ] erase_slist(): Remove at a given index
-    - [ ] find_slist(): Find the first matching element
+    - [x] pop_front_slist(): Remove the first node
+    - [x] pop_back_slist(): Remove the last node
+    - [x] insert_slist(): Insert at a given index
+    - [x] erase_slist(): Remove at a given index
+    - [x] find_slist(): Find the first matching element
     - [x] reverse_slist(): Reverse links in place
 
 3. Doubly Linked List (dlist_t)
